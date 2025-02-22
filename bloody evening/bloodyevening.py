@@ -1,6 +1,5 @@
 import pygame
 import sys
-import random
 
 # Инициализация pygame
 pygame.init()
@@ -575,6 +574,7 @@ scenes = {
 # Глобальные переменные
 current_scene = "intro"
 sequence_index = 0
+
 # Переменные для анимации текста
 typing_text = ""  # Текст, который печатается
 typing_index = 0  # Индекс текущего символа
@@ -582,7 +582,7 @@ last_typing_time = 0  # Время последнего обновления т�
 typing_speed = 35  # Скорость печати текста (в миллисекундах)
 
 # Музыка
-pygame.mixer.music.load("music.mp3")  # Замените на ваш файл музыки
+pygame.mixer.music.load("music.mp3")
 pygame.mixer.music.play(-1)  # Бесконечное воспроизведение
 
 # Функция для увеличения громкости
@@ -591,144 +591,13 @@ def increase_volume():
     if current_volume < 1.0:
         pygame.mixer.music.set_volume(min(current_volume + 0.1, 1.0))
 
+
 # Функция для уменьшения громкости
 def decrease_volume():
     current_volume = pygame.mixer.music.get_volume()
     if current_volume > 0.0:
         pygame.mixer.music.set_volume(max(current_volume - 0.1, 0.0))
 
-# Змейка
-def snake_game():
-    snake_speed = 15
-    window_width = 800
-    window_height = 600
-
-    # Цвета
-    yellow = (255, 255, 102)
-    black = (0, 0, 0)
-    red = (213, 50, 80)
-    green = (0, 255, 0)
-    blue = (50, 153, 213)
-
-    # Создание окна
-    game_window = pygame.display.set_mode((window_width, window_height))
-    pygame.display.set_caption('Змейка')
-
-    # Часы для управления скоростью игры
-    clock = pygame.time.Clock()
-
-    # Размер блока змейки и скорость змейки
-    block_size = 10
-
-    # Шрифты
-    font_style = pygame.font.SysFont("bahnschrift", 25)
-    score_font = pygame.font.SysFont("comicsansms", 35)
-
-    # Функция для отображения счета
-    def display_score(score):
-        value = score_font.render("Ваш счет: " + str(score), True, yellow)
-        game_window.blit(value, [0, 0])
-
-    # Функция для отрисовки змейки
-    def draw_snake(block_size, snake_list):
-        for block in snake_list:
-            pygame.draw.rect(game_window, green, [block[0], block[1], block_size, block_size])
-
-    # Функция для отображения сообщения на экране
-    def display_message(msg, color):
-        mesg = font_style.render(msg, True, color)
-        game_window.blit(mesg, [window_width / 6, window_height / 3])
-
-    # Основная функция игры
-    def game_loop():
-        game_over = False
-        game_close = False
-
-        # Начальная позиция змейки
-        x = window_width / 2
-        y = window_height / 2
-
-        # Изменение позиции змейки
-        x_change = 0
-        y_change = 0
-
-        # Список для хранения тела змейки
-        snake_list = []
-        snake_length = 1
-
-        # Позиция еды
-        food_x = round(random.randrange(0, window_width - block_size) / 10.0) * 10.0
-        food_y = round(random.randrange(0, window_height - block_size) / 10.0) * 10.0
-
-        while not game_over:
-
-            while game_close:
-                game_window.fill(blue)
-                display_message("Вы проиграли! Нажмите Q для выхода или C для повторной игры", red)
-                display_score(snake_length - 1)
-                pygame.display.update()
-
-                for event in pygame.event.get():
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_q:
-                            game_over = True
-                            game_close = False
-                        if event.key == pygame.K_c:
-                            game_loop()
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    game_over = True
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT:
-                        x_change = -block_size
-                        y_change = 0
-                    elif event.key == pygame.K_RIGHT:
-                        x_change = block_size
-                        y_change = 0
-                    elif event.key == pygame.K_UP:
-                        y_change = -block_size
-                        x_change = 0
-                    elif event.key == pygame.K_DOWN:
-                        y_change = block_size
-                        x_change = 0
-
-            # Проверка на выход за границы окна
-            if x >= window_width or x < 0 or y >= window_height or y < 0:
-                game_close = True
-            x += x_change
-            y += y_change
-            game_window.fill(black)
-            pygame.draw.rect(game_window, red, [food_x, food_y, block_size, block_size])
-            snake_head = []
-            snake_head.append(x)
-            snake_head.append(y)
-            snake_list.append(snake_head)
-            if len(snake_list) > snake_length:
-                del snake_list[0]
-
-            # Проверка на столкновение с собой
-            for block in snake_list[:-1]:
-                if block == snake_head:
-                    game_close = True
-
-            draw_snake(block_size, snake_list)
-            display_score(snake_length - 1)
-
-            pygame.display.update()
-
-            # Проверка на съедание еды
-            if x == food_x and y == food_y:
-                food_x = round(random.randrange(0, window_width - block_size) / 10.0) * 10.0
-                food_y = round(random.randrange(0, window_height - block_size) / 10.0) * 10.0
-                snake_length += 1
-
-            clock.tick(snake_speed)
-
-        pygame.quit()
-        quit()
-
-    game_loop()
 
 def render_scene(scene_key, sequence_index):
     global typing_text, typing_index, last_typing_time
@@ -747,24 +616,20 @@ def render_scene(scene_key, sequence_index):
 
     text_surface = font.render(typing_text, True, WHITE)
     text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT - 100))
-
-    # Создаем полупрозрачный фон для текста
     background_rect = pygame.Rect(text_rect.left - 10, text_rect.top - 10, text_rect.width + 20, text_rect.height + 20)
     pygame.draw.rect(screen, TRANSPARENT_BLACK, background_rect)
-
-    # Отображаем текст
     screen.blit(text_surface, text_rect)
     pygame.display.flip()
 
+
 def render_choices(scene_key):
     scene = scenes[scene_key]
-
-    # Используем картинку "black_background" из словаря backgrounds
     screen.blit(backgrounds["black_background"], (0, 0))
     for idx, choice in enumerate(scene["choices"]):
         choice_surface = font.render(f"{idx + 1}. {choice}", True, RED)
         screen.blit(choice_surface, (50, 150 + idx * 50))
     pygame.display.flip()
+
 
 def main():
     global current_scene, sequence_index, typing_text, typing_index, last_typing_time
@@ -797,8 +662,6 @@ def main():
                         typing_index = 0
                         current_scene = scene["next"][index]
                         sequence_index = 0
-                        if current_scene in ["new_life_with_protection", "independent_life", "hidden_life", "join_carmen", "accept_fate", "on_the_run", "new_life"]:
-                            snake_game()
                 # Управление громкостью
                 if event.key == pygame.K_PLUS or event.key == pygame.K_EQUALS:  # Клавиша "+"
                     increase_volume()
@@ -806,6 +669,7 @@ def main():
                     decrease_volume()
 
         clock.tick(30)
+
 
 if __name__ == "__main__":
     main()
